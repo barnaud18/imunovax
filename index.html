@@ -1,0 +1,633 @@
+<!DOCTYPE html>
+<html lang="pt">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>IMUNOVAX - Pesquisa e Validação de Vacinas</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            line-height: 1.6;
+            color: #333;
+            overflow-x: hidden;
+        }
+
+        .navbar {
+            background: linear-gradient(135deg, #2B5F82 0%, #1e4a66 100%);
+            padding: 1rem 2rem;
+            position: fixed;
+            width: 100%;
+            top: 0;
+            z-index: 1000;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.2);
+            animation: slideDown 0.5s ease;
+        }
+
+        @keyframes slideDown {
+            from { transform: translateY(-100%); }
+            to { transform: translateY(0); }
+        }
+
+        .nav-container {
+            max-width: 1200px;
+            margin: 0 auto;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .logo {
+            font-size: 1.8rem;
+            font-weight: bold;
+            color: white;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .logo-icon {
+            width: 45px;
+            height: 45px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .logo-icon svg {
+            width: 100%;
+            height: 100%;
+            filter: drop-shadow(0 2px 4px rgba(0,0,0,0.2));
+        }
+
+        .nav-links {
+            display: flex;
+            gap: 2rem;
+            align-items: center;
+        }
+
+        .nav-links a {
+            color: white;
+            text-decoration: none;
+            font-weight: 500;
+            transition: opacity 0.3s;
+        }
+
+        .nav-links a:hover {
+            opacity: 0.8;
+        }
+
+        .lang-switch {
+            background: rgba(255,255,255,0.2);
+            border: 2px solid white;
+            color: white;
+            padding: 0.5rem 1rem;
+            border-radius: 25px;
+            cursor: pointer;
+            font-weight: bold;
+            transition: all 0.3s;
+        }
+
+        .lang-switch:hover {
+            background: white;
+            color: #2B5F82;
+        }
+
+        .hero {
+            background: linear-gradient(135deg, #2B5F82 0%, #1e4a66 100%);
+            color: white;
+            padding: 150px 2rem 100px;
+            text-align: center;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .hero::before {
+            content: '';
+            position: absolute;
+            width: 200%;
+            height: 200%;
+            background: radial-gradient(circle, rgba(255,255,255,0.05) 1px, transparent 1px);
+            background-size: 50px 50px;
+            animation: float 20s linear infinite;
+        }
+
+        @keyframes float {
+            0% { transform: translate(0, 0); }
+            100% { transform: translate(50px, 50px); }
+        }
+
+        .hero-content {
+            position: relative;
+            z-index: 1;
+            max-width: 900px;
+            margin: 0 auto;
+        }
+
+        .hero h1 {
+            font-size: 3.5rem;
+            margin-bottom: 1rem;
+            animation: fadeInUp 1s ease;
+        }
+
+        .hero p {
+            font-size: 1.3rem;
+            margin-bottom: 2rem;
+            animation: fadeInUp 1s ease 0.2s backwards;
+            opacity: 0.95;
+        }
+
+        @keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translateY(30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .hero-badge {
+            display: inline-block;
+            background: rgba(255,255,255,0.2);
+            padding: 0.5rem 1.5rem;
+            border-radius: 30px;
+            margin-bottom: 2rem;
+            animation: fadeInUp 1s ease 0.4s backwards;
+            backdrop-filter: blur(10px);
+        }
+
+        .section {
+            padding: 80px 2rem;
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        .section-title {
+            font-size: 2.5rem;
+            text-align: center;
+            margin-bottom: 1rem;
+            color: #2B5F82;
+        }
+
+        .section-subtitle {
+            text-align: center;
+            color: #666;
+            font-size: 1.1rem;
+            margin-bottom: 3rem;
+        }
+
+        .pipeline {
+            background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+        }
+
+        .pipeline-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 2rem;
+            margin-top: 3rem;
+        }
+
+        .vaccine-card {
+            background: white;
+            padding: 2rem;
+            border-radius: 20px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+            transition: all 0.3s;
+            border-left: 5px solid #00BFA5;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .vaccine-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 5px;
+            background: linear-gradient(90deg, #00BFA5, #2B5F82);
+        }
+
+        .vaccine-card:hover {
+            transform: translateY(-10px);
+            box-shadow: 0 15px 40px rgba(0, 191, 165, 0.2);
+        }
+
+        .vaccine-icon {
+            font-size: 3rem;
+            margin-bottom: 1rem;
+        }
+
+        .vaccine-card h3 {
+            font-size: 1.5rem;
+            margin-bottom: 1rem;
+            color: #2B5F82;
+        }
+
+        .vaccine-status {
+            display: inline-block;
+            padding: 0.3rem 1rem;
+            background: #e8f5e9;
+            color: #2e7d32;
+            border-radius: 20px;
+            font-size: 0.9rem;
+            font-weight: bold;
+            margin-top: 1rem;
+        }
+
+        .about-content {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 2rem;
+            margin-top: 3rem;
+        }
+
+        .value-card {
+            background: white;
+            padding: 2rem;
+            border-radius: 15px;
+            box-shadow: 0 5px 20px rgba(0,0,0,0.1);
+            transition: all 0.3s;
+        }
+
+        .value-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 30px rgba(0, 191, 165, 0.15);
+        }
+
+        .value-icon {
+            font-size: 2.5rem;
+            margin-bottom: 1rem;
+        }
+
+        .value-card h3 {
+            color: #2B5F82;
+            margin-bottom: 1rem;
+        }
+
+        .research-section {
+            background: #f8f9fa;
+        }
+
+        .research-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 2rem;
+            margin-top: 3rem;
+        }
+
+        .research-item {
+            text-align: center;
+            padding: 2rem;
+            background: white;
+            border-radius: 15px;
+            transition: all 0.3s;
+        }
+
+        .research-item:hover {
+            transform: scale(1.05);
+            box-shadow: 0 10px 25px rgba(0,0,0,0.1);
+        }
+
+        .research-number {
+            font-size: 3rem;
+            font-weight: bold;
+            color: #2B5F82;
+            margin-bottom: 0.5rem;
+        }
+
+        .contact-section {
+            background: linear-gradient(135deg, #2B5F82 0%, #1e4a66 100%);
+            color: white;
+        }
+
+        .contact-section .section-title {
+            color: white;
+        }
+
+        .contact-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 2rem;
+            margin-top: 3rem;
+        }
+
+        .contact-card {
+            background: rgba(255,255,255,0.1);
+            padding: 2rem;
+            border-radius: 15px;
+            text-align: center;
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255,255,255,0.2);
+            transition: all 0.3s;
+        }
+
+        .contact-card:hover {
+            background: rgba(255,255,255,0.2);
+            transform: translateY(-5px);
+        }
+
+        .contact-icon {
+            font-size: 2.5rem;
+            margin-bottom: 1rem;
+        }
+
+        footer {
+            background: #1a1a2e;
+            color: white;
+            padding: 3rem 2rem 2rem;
+        }
+
+        .footer-content {
+            max-width: 1200px;
+            margin: 0 auto;
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 2rem;
+            margin-bottom: 2rem;
+        }
+
+        .footer-section h4 {
+            margin-bottom: 1rem;
+            color: #00BFA5;
+        }
+
+        .footer-section ul {
+            list-style: none;
+        }
+
+        .footer-section ul li {
+            margin-bottom: 0.5rem;
+            opacity: 0.8;
+        }
+
+        .footer-bottom {
+            text-align: center;
+            padding-top: 2rem;
+            border-top: 1px solid rgba(255,255,255,0.1);
+        }
+
+        .brazil-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            background: rgba(255,255,255,0.1);
+            padding: 0.5rem 1rem;
+            border-radius: 20px;
+            margin-top: 1rem;
+        }
+
+        @media (max-width: 768px) {
+            .hero h1 {
+                font-size: 2.5rem;
+            }
+            .nav-links {
+                gap: 1rem;
+                font-size: 0.9rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <nav class="navbar">
+        <div class="nav-container">
+            <div class="logo">
+                <div class="logo-icon">
+                    <svg viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg">
+                        <path d="M50 10 L80 30 L80 70 L50 90 L20 70 L20 30 Z" fill="#2B5F82" stroke="#fff" stroke-width="2"/>
+                        <ellipse cx="50" cy="55" rx="15" ry="20" fill="#fff"/>
+                        <ellipse cx="50" cy="55" rx="12" ry="17" fill="#00BFA5"/>
+                    </svg>
+                </div>
+                <span>IMUNOVAX</span>
+            </div>
+            <div class="nav-links">
+                <a href="#home" data-pt="Início" data-en="Home">Início</a>
+                <a href="#pipeline" data-pt="Pipeline" data-en="Pipeline">Pipeline</a>
+                <a href="#about" data-pt="Sobre Nós" data-en="About Us">Sobre Nós</a>
+                <a href="#research" data-pt="Pesquisa" data-en="Research">Pesquisa</a>
+                <a href="#contact" data-pt="Contato" data-en="Contact">Contato</a>
+                <button class="lang-switch" onclick="toggleLanguage()">EN</button>
+            </div>
+        </div>
+    </nav>
+
+    <section id="home" class="hero">
+        <div class="hero-content">
+            <div class="hero-badge">
+                <span data-pt="🇧🇷 Empresa Brasileira de Biotecnologia" data-en="🇧🇷 Brazilian Biotechnology Company">🇧🇷 Empresa Brasileira de Biotecnologia</span>
+            </div>
+            <h1 data-pt="Inovação em Pesquisa de Vacinas" data-en="Innovation in Vaccine Research">Inovação em Pesquisa de Vacinas</h1>
+            <p data-pt="Desenvolvendo e validando vacinas de próxima geração para proteger a saúde global" data-en="Developing and validating next-generation vaccines to protect global health">Desenvolvendo e validando vacinas de próxima geração para proteger a saúde global</p>
+        </div>
+    </section>
+
+    <section id="pipeline" class="section pipeline">
+        <h2 class="section-title" data-pt="Nosso Pipeline de Vacinas" data-en="Our Vaccine Pipeline">Nosso Pipeline de Vacinas</h2>
+        <p class="section-subtitle" data-pt="Programas de pesquisa em desenvolvimento e validação clínica" data-en="Research programs in development and clinical validation">Programas de pesquisa em desenvolvimento e validação clínica</p>
+        
+        <div class="pipeline-grid">
+            <div class="vaccine-card">
+                <div class="vaccine-icon">🦠</div>
+                <h3 data-pt="Vacina COVID-19 (Spray Nasal V1)" data-en="COVID-19 Vaccine (Nasal Spray V1)">Vacina COVID-19 (Spray Nasal V1)</h3>
+                <p data-pt="Inovadora vacina intranasal sem tecnologia mRNA, com resposta imunológica mucosa aprimorada" data-en="Innovative intranasal vaccine without mRNA technology, with enhanced mucosal immune response">Inovadora vacina intranasal sem tecnologia mRNA, com resposta imunológica mucosa aprimorada</p>
+                <div class="vaccine-status" data-pt="Em Validação Clínica" data-en="In Clinical Validation">Em Validação Clínica</div>
+            </div>
+
+            <div class="vaccine-card">
+                <div class="vaccine-icon">🧬</div>
+                <h3 data-pt="Vacina COVID-19 (Spray Nasal V2)" data-en="COVID-19 Vaccine (Nasal Spray V2)">Vacina COVID-19 (Spray Nasal V2)</h3>
+                <p data-pt="Segunda geração de spray nasal com proteção ampliada contra variantes emergentes" data-en="Second generation nasal spray with expanded protection against emerging variants">Segunda geração de spray nasal com proteção ampliada contra variantes emergentes</p>
+                <div class="vaccine-status" data-pt="Em Pesquisa" data-en="In Research">Em Pesquisa</div>
+            </div>
+
+            <div class="vaccine-card">
+                <div class="vaccine-icon">💉</div>
+                <h3 data-pt="Vacina Hepatite B" data-en="Hepatitis B Vaccine">Vacina Hepatite B</h3>
+                <p data-pt="Tecnologia recombinante avançada para proteção duradoura com menos doses" data-en="Advanced recombinant technology for long-lasting protection with fewer doses">Tecnologia recombinante avançada para proteção duradoura com menos doses</p>
+                <div class="vaccine-status" data-pt="Em Validação Clínica" data-en="In Clinical Validation">Em Validação Clínica</div>
+            </div>
+
+            <div class="vaccine-card">
+                <div class="vaccine-icon">🦟</div>
+                <h3 data-pt="Vacina Dengue" data-en="Dengue Vaccine">Vacina Dengue</h3>
+                <p data-pt="Proteção tetravalente contra todos os sorotipos do vírus da dengue" data-en="Tetravalent protection against all dengue virus serotypes">Proteção tetravalente contra todos os sorotipos do vírus da dengue</p>
+                <div class="vaccine-status" data-pt="Em Validação Clínica" data-en="In Clinical Validation">Em Validação Clínica</div>
+            </div>
+        </div>
+    </section>
+
+    <section id="about" class="section">
+        <h2 class="section-title" data-pt="Sobre a IMUNOVAX" data-en="About IMUNOVAX">Sobre a IMUNOVAX</h2>
+        <p class="section-subtitle" data-pt="Empresa brasileira pioneira em pesquisa e desenvolvimento de imunobiológicos" data-en="Brazilian pioneer company in immunobiological research and development">Empresa brasileira pioneira em pesquisa e desenvolvimento de imunobiológicos</p>
+        
+        <div class="about-content">
+            <div class="value-card">
+                <div class="value-icon">🔬</div>
+                <h3 data-pt="Pesquisa de Excelência" data-en="Excellence in Research">Pesquisa de Excelência</h3>
+                <p data-pt="Laboratórios de última geração e equipe científica altamente qualificada dedicada à descoberta de novas vacinas" data-en="State-of-the-art laboratories and highly qualified scientific team dedicated to discovering new vaccines">Laboratórios de última geração e equipe científica altamente qualificada dedicada à descoberta de novas vacinas</p>
+            </div>
+
+            <div class="value-card">
+                <div class="value-icon">✅</div>
+                <h3 data-pt="Validação Rigorosa" data-en="Rigorous Validation">Validação Rigorosa</h3>
+                <p data-pt="Protocolos internacionais de validação clínica garantindo segurança e eficácia máximas" data-en="International clinical validation protocols ensuring maximum safety and efficacy">Protocolos internacionais de validação clínica garantindo segurança e eficácia máximas</p>
+            </div>
+
+            <div class="value-card">
+                <div class="value-icon">🌐</div>
+                <h3 data-pt="Tecnologias Consolidadas" data-en="Established Technologies">Tecnologias Consolidadas</h3>
+                <p data-pt="Utilizando plataformas tecnológicas validadas internacionalmente para desenvolvimento de vacinas seguras" data-en="Using internationally validated technology platforms for safe vaccine development">Utilizando plataformas tecnológicas validadas internacionalmente para desenvolvimento de vacinas seguras</p>
+            </div>
+
+            <div class="value-card">
+                <div class="value-icon">🌍</div>
+                <h3 data-pt="Impacto Global" data-en="Global Impact">Impacto Global</h3>
+                <p data-pt="Parcerias internacionais e contribuição para a saúde pública mundial" data-en="International partnerships and contribution to global public health">Parcerias internacionais e contribuição para a saúde pública mundial</p>
+            </div>
+        </div>
+    </section>
+
+    <section id="research" class="section research-section">
+        <h2 class="section-title" data-pt="Nossa Pesquisa em Números" data-en="Our Research in Numbers">Nossa Pesquisa em Números</h2>
+        
+        <div class="research-grid">
+            <div class="research-item">
+                <div class="research-number">4</div>
+                <p data-pt="Vacinas em Desenvolvimento" data-en="Vaccines in Development">Vacinas em Desenvolvimento</p>
+            </div>
+            <div class="research-item">
+                <div class="research-number">3</div>
+                <p data-pt="Programas em Validação Clínica" data-en="Programs in Clinical Validation">Programas em Validação Clínica</p>
+            </div>
+            <div class="research-item">
+                <div class="research-number">15+</div>
+                <p data-pt="Pesquisadores envolvidos nos desenvolvimentos dos imunizantes" data-en="Researchers involved in vaccine development">Pesquisadores envolvidos nos desenvolvimentos dos imunizantes</p>
+            </div>
+            <div class="research-item">
+                <div class="research-number">✓</div>
+                <p data-pt="Tecnologias Consolidadas Internacionalmente" data-en="Internationally Established Technologies">Tecnologias Consolidadas Internacionalmente</p>
+            </div>
+        </div>
+    </section>
+
+    <section id="contact" class="section contact-section">
+        <h2 class="section-title" data-pt="Entre em Contato" data-en="Get in Touch">Entre em Contato</h2>
+        <p class="section-subtitle" style="color: rgba(255,255,255,0.9);" data-pt="Parcerias, colaborações científicas e informações institucionais" data-en="Partnerships, scientific collaborations and institutional information">Parcerias, colaborações científicas e informações institucionais</p>
+        
+        <div class="contact-grid">
+            <div class="contact-card">
+                <div class="contact-icon">📧</div>
+                <h3 data-pt="E-mail Institucional" data-en="Institutional Email">E-mail Institucional</h3>
+                <p>contato@imunovax.com</p>
+            </div>
+            <div class="contact-card">
+                <div class="contact-icon">🔬</div>
+                <h3 data-pt="Parcerias Científicas" data-en="Scientific Partnerships">Parcerias Científicas</h3>
+                <p>pesquisa@imunovax.com</p>
+            </div>
+            <div class="contact-card">
+                <div class="contact-icon">📰</div>
+                <h3 data-pt="Imprensa" data-en="Press">Imprensa</h3>
+                <p>imprensa@imunovax.com</p>
+            </div>
+            <div class="contact-card">
+                <div class="contact-icon">🤝</div>
+                <h3 data-pt="Investidores" data-en="Investors">Investidores</h3>
+                <p>investidores@imunovax.com</p>
+            </div>
+        </div>
+    </section>
+
+    <footer>
+        <div class="footer-content">
+            <div class="footer-section">
+                <h4 data-pt="Sobre a IMUNOVAX" data-en="About IMUNOVAX">Sobre a IMUNOVAX</h4>
+                <p data-pt="Empresa brasileira dedicada à pesquisa, desenvolvimento e validação de vacinas inovadoras." data-en="Brazilian company dedicated to research, development and validation of innovative vaccines.">Empresa brasileira dedicada à pesquisa, desenvolvimento e validação de vacinas inovadoras.</p>
+                <div class="brazil-badge">
+                    <span>🇧🇷</span>
+                    <span data-pt="Orgulho Nacional" data-en="National Pride">Orgulho Nacional</span>
+                </div>
+            </div>
+            <div class="footer-section">
+                <h4 data-pt="Pipeline" data-en="Pipeline">Pipeline</h4>
+                <ul>
+                    <li data-pt="Vacina COVID-19 Spray Nasal (V1)" data-en="COVID-19 Nasal Spray Vaccine (V1)">Vacina COVID-19 Spray Nasal (V1)</li>
+                    <li data-pt="Vacina COVID-19 Spray Nasal (V2)" data-en="COVID-19 Nasal Spray Vaccine (V2)">Vacina COVID-19 Spray Nasal (V2)</li>
+                    <li data-pt="Vacina Hepatite B" data-en="Hepatitis B Vaccine">Vacina Hepatite B</li>
+                    <li data-pt="Vacina Dengue" data-en="Dengue Vaccine">Vacina Dengue</li>
+                </ul>
+            </div>
+            <div class="footer-section">
+                <h4 data-pt="Links Úteis" data-en="Useful Links">Links Úteis</h4>
+                <ul>
+                    <li data-pt="Publicações Científicas" data-en="Scientific Publications">Publicações Científicas</li>
+                    <li data-pt="Ensaios Clínicos" data-en="Clinical Trials">Ensaios Clínicos</li>
+                    <li data-pt="Carreiras" data-en="Careers">Carreiras</li>
+                    <li data-pt="Política de Privacidade" data-en="Privacy Policy">Política de Privacidade</li>
+                </ul>
+            </div>
+        </div>
+        <div class="footer-bottom">
+            <p data-pt="© 2025 IMUNOVAX - Todos os direitos reservados" data-en="© 2025 IMUNOVAX - All rights reserved">© 2025 IMUNOVAX - Todos os direitos reservados</p>
+            <p data-pt="Pesquisa brasileira salvando vidas" data-en="Brazilian research saving lives">Pesquisa brasileira salvando vidas</p>
+        </div>
+    </footer>
+
+    <script>
+        let currentLang = 'pt';
+
+        function toggleLanguage() {
+            currentLang = currentLang === 'pt' ? 'en' : 'pt';
+            const elements = document.querySelectorAll('[data-pt][data-en]');
+            
+            elements.forEach(el => {
+                el.textContent = el.getAttribute(`data-${currentLang}`);
+            });
+
+            document.querySelector('.lang-switch').textContent = currentLang === 'pt' ? 'EN' : 'PT';
+            document.documentElement.lang = currentLang;
+        }
+
+        // Smooth scroll
+        document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+            anchor.addEventListener('click', function (e) {
+                e.preventDefault();
+                const target = document.querySelector(this.getAttribute('href'));
+                if (target) {
+                    target.scrollIntoView({ behavior: 'smooth', block: 'start' });
+                }
+            });
+        });
+
+        // Scroll animations
+        const observerOptions = {
+            threshold: 0.1,
+            rootMargin: '0px 0px -100px 0px'
+        };
+
+        const observer = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    entry.target.style.opacity = '1';
+                    entry.target.style.transform = 'translateY(0)';
+                }
+            });
+        }, observerOptions);
+
+        document.querySelectorAll('.vaccine-card, .value-card').forEach(card => {
+            card.style.opacity = '0';
+            card.style.transform = 'translateY(30px)';
+            card.style.transition = 'all 0.6s ease';
+            observer.observe(card);
+        });
+    </script>
+</body>
+</html>
